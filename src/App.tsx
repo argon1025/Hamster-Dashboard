@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import components from "./components";
+import * as AppInterface from "./interface";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="underline">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+
+  state: AppInterface.Main.State = {
+    NodeDataList: undefined
+  };
+
+  render() {
+    return (
+      <div className="w-full h-full bg-gray-50 font-main-font">
+        <components.Navbar />
+
+        <div className="flex flex-row-reverse m-3">
+          <components.CounterWiget counterType="player" counterData="3" />
+        </div>
+
+        <components.NodeList NodeListData={undefined} />
+        
+      </div>
+    );
+  }
 }
-
 export default App;
