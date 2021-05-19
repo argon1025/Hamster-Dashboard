@@ -1,7 +1,14 @@
 import * as React from "react";
-import * as AppInterface from "../../../interface";
 
-class Node extends React.Component<AppInterface.NodeList.NodeListData> {
+interface NodeProps {
+  userName: string;
+  cpu: number;
+  ram: number;
+  vga: number;
+  status: string;
+};
+
+class Node extends React.Component<NodeProps> {
   render() {
     return (
         <tr className="border-b border-gray-200 hover:bg-gray-100">

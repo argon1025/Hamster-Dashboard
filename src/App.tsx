@@ -1,11 +1,23 @@
 import * as React from "react";
 import components from "./components";
-import * as AppInterface from "./interface";
+
+
+type NodeListData = {
+  userName: string;
+  cpu: number;
+  ram: number;
+  vga: number;
+  status: string;
+};
+
+interface AppState {
+  NodeDataList: Array<NodeListData> | undefined;
+}
 
 
 class App extends React.Component {
 
-  state: AppInterface.Main.State = {
+  state: AppState = {
     NodeDataList: undefined
   };
 
