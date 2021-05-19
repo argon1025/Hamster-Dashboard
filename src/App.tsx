@@ -1,13 +1,46 @@
 import * as React from "react";
 import components from "./components";
-import * as AppInterface from "./interface";
+
+
+type NodeListData = {
+  userName: string;
+  cpu: number;
+  ram: number;
+  vga: number;
+  status: string;
+};
+
+interface AppState {
+  NodeDataList: Array<NodeListData> | undefined;
+  totalNodeCount:number;
+}
 
 
 class App extends React.Component {
 
-  state: AppInterface.Main.State = {
-    NodeDataList: undefined
+  state: AppState = {
+    NodeDataList: undefined,
+    totalNodeCount: 0,
   };
+  constructor(props: {} | Readonly<{}>){
+    super(props);
+
+    this.setTotalNodeCount = this.setTotalNodeCount.bind(this);
+    this.addNodeCount = this.addNodeCount.bind(this);
+    this.subNodeCount = this.subNodeCount.bind(this);
+  }
+
+  protected setTotalNodeCount(count:number):void{
+    this.setState({...this.state,totalNodeCount:count});
+  }
+  protected addNodeCount():void{
+    let nowTotalNodeCount:number = this.state.totalNodeCount + 1;
+    this.setState({...this.state,totalNodeCount:nowTotalNodeCount});
+  }
+  protected subNodeCount():void{
+    let nowTotalNodeCount:number = this.state.totalNodeCount - 1;
+    this.setState({...this.state,totalNodeCount:nowTotalNodeCount});
+  }
 
   render() {
     return (
@@ -15,11 +48,10 @@ class App extends React.Component {
         <components.Navbar />
 
         <div className="flex flex-row-reverse m-3">
-          <components.CounterWiget counterType="player" counterData="3" />
+          <components.CounterWiget counterType="Online" counterData={this.state.totalNodeCount} />
         </div>
 
-        <components.NodeList NodeListData={undefined} />
-        
+        <components.NodeList NodeListData={this.state.NodeDataList} />
       </div>
     );
   }

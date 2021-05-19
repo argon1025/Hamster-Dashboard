@@ -1,8 +1,19 @@
 import * as React from "react";
 import Node from "./Node";
-import * as AppInterface from "../../../interface";
 
-class NodeList extends React.Component<AppInterface.NodeList.Node> {
+type NodeListData = {
+  userName: string;
+  cpu: number;
+  ram: number;
+  vga: number;
+  status: string;
+};
+
+interface NodeListProps {
+  NodeListData: Array<NodeListData>|undefined;
+}
+
+class NodeList extends React.Component<NodeListProps> {
   render() {
     return (
         <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5">
