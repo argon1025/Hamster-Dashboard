@@ -1,6 +1,7 @@
 import * as React from "react";
+import * as AppInterface from "../../interface";
 
-class CounterWidget extends React.Component {
+class CounterWidget extends React.Component<AppInterface.CounterWidget.Props> {
   render() {
     return (
       <div className="w-full lg:w-1/5 rounded-lg overflow-hidden shadow-md m-3">
@@ -17,8 +18,8 @@ class CounterWidget extends React.Component {
               </svg>
             </div>
             <div className="flex flex-col justify-center">
-              <div className=" text-lg">10</div>
-              <div className=" text-sm text-gray-400">Online</div>
+              <div className=" text-lg">{this.props.counterData}</div>
+              <div className=" text-sm text-gray-400">{this.props.counterType}</div>
             </div>
           </div>
         </div>

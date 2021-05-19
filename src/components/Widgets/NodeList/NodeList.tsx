@@ -1,7 +1,8 @@
 import * as React from "react";
 import Node from "./Node";
+import * as AppInterface from "../../../interface";
 
-class NodeList extends React.Component {
+class NodeList extends React.Component<AppInterface.NodeList.Node> {
   render() {
     return (
         <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5">
@@ -15,18 +16,7 @@ class NodeList extends React.Component {
             </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
-            <Node />
+            <Node   userName="hi" cpu= {32} ram= {15} vga={5} status="ACTIVATE"/>
           </tbody>
         </table>
       </div>

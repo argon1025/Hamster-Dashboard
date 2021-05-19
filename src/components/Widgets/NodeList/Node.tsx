@@ -1,23 +1,24 @@
 import * as React from "react";
+import * as AppInterface from "../../../interface";
 
-class Node extends React.Component {
+class Node extends React.Component<AppInterface.NodeList.NodeListData> {
   render() {
     return (
         <tr className="border-b border-gray-200 hover:bg-gray-100">
         <td className="py-3 px-6 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">-</div>
-            <span className="font-medium">coinmaster-102</span>
+            <span className="font-medium">{this.props.userName}</span>
           </div>
         </td>
         <td className="py-3 px-6 text-left">
           <div className="flex items-center">
-            <span>CPU : 32% RAM: 10% VGA: 90%</span>
+            <span>CPU : {this.props.cpu}% RAM: {this.props.ram}% VGA: {this.props.vga}%</span>
           </div>
         </td>
         <td className="py-3 px-6 text-center">
           <span className="bg-purple-200 text-purple-600 py-1 px-3 rounded-full text-xs">
-            Active
+            {this.props.status}
           </span>
         </td>
         <td className="py-3 px-6 text-center">

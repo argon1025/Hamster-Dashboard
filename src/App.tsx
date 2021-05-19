@@ -1,24 +1,24 @@
 import * as React from "react";
 import components from "./components";
+import * as AppInterface from "./interface";
 
-type AppState = {
-  count: number; // like this
-};
+
 class App extends React.Component {
-  state: AppState = {
-    // optional second annotation for better type inference
-    count: 0,
+
+  state: AppInterface.Main.State = {
+    NodeDataList: undefined
   };
+
   render() {
     return (
       <div className="w-full h-full bg-gray-50 font-main-font">
         <components.Navbar />
 
         <div className="flex flex-row-reverse m-3">
-          <components.CounterWiget />
+          <components.CounterWiget counterType="player" counterData="3" />
         </div>
 
-        <components.NodeList />
+        <components.NodeList NodeListData={undefined} />
         
       </div>
     );
