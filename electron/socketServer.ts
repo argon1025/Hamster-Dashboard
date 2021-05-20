@@ -3,7 +3,7 @@ import * as socketio from "socket.io";
 import * as path from "path";
 
 
-export default (mainWindow: any)=>{
+export default function a(mainWindow: any){
     const app = express();
     app.set("port", 8484);
     
@@ -20,12 +20,13 @@ export default (mainWindow: any)=>{
     // a websocket, log that a user has connected
     io.on("connection", function(socket: any) {
       console.log("a user connected");
-      socket.on("message", function(message: any) {
-        console.log(message);
+      socket.on("userinfo", function(userdata: any) {
+        console.log(userdata);
+        mainWindow.webContents.send('userinfo', userdata);
       });
     });
     
-    const server = http.listen(8484, function() {
-      console.log("listening on *:3000");
+    http.listen(8484, function() {
+      console.log("listening on *:8484");
     });
     }
