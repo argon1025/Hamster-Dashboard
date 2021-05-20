@@ -1,7 +1,8 @@
 import * as React from "react";
 
 interface NodeProps {
-  userName: string;
+  socketId: string;
+  clientId: string;
   cpu: number;
   ram: number;
   vga: number;
@@ -15,7 +16,7 @@ class Node extends React.Component<NodeProps> {
         <td className="py-3 px-6 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">-</div>
-            <span className="font-medium">{this.props.userName}</span>
+            <span className="font-medium">{this.props.clientId}</span>
           </div>
         </td>
         <td className="py-3 px-6 text-left">

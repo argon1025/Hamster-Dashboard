@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as isDev from 'electron-is-dev';
 import * as path from 'path';
-import socketServer from "./socketServer";
+import socketServer from "./Socket";
 
 let mainWindow: BrowserWindow;
 
@@ -25,7 +25,6 @@ const createWindow = () => {
   // production에서는 패키지 내부 리소스에 접근.
   // 개발 중에는 개발 도구에서 호스팅하는 주소에서 로드.
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`);
-
   socketServer(mainWindow);
 
   if (isDev) {

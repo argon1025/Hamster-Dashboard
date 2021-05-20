@@ -2,7 +2,8 @@ import * as React from "react";
 import Node from "./Node";
 
 type NodeListData = {
-  userName: string;
+  socketId: string;
+  clientId: string;
   cpu: number;
   ram: number;
   vga: number;
@@ -20,14 +21,16 @@ class NodeList extends React.Component<NodeListProps> {
         <table className="min-w-max w-full table-auto">
           <thead>
             <tr className="bg-gradient-to-r from-green-400 to-blue-500 text-white uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left">UserName</th>
+              <th className="py-3 px-6 text-left">ClientId</th>
               <th className="py-3 px-6 text-left">Performance</th>
               <th className="py-3 px-6 text-center">Status</th>
               <th className="py-3 px-6 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
-            <Node   userName="hi" cpu= {32} ram= {15} vga={5} status="ACTIVATE"/>
+            {/* <>{console.log(this.props)}</> */}
+            
+            <Node   clientId="hi" socketId="a" cpu= {32} ram= {15} vga={5} status="ACTIVATE"/>
           </tbody>
         </table>
       </div>
