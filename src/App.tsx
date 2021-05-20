@@ -51,7 +51,8 @@ class App extends React.Component {
    */
   protected getUserData(): void {
     electron.ipcRenderer.on("userinfo", (event: any, data: any) => {
-      this.setState({ ...this.state.NodeDataList, NodeDataList: data });
+      this.addNodeCount();
+      console.log(data);
     });
   }
   /**
@@ -76,11 +77,11 @@ class App extends React.Component {
    * 
    */
   protected allUserShutdown(): void {
-    console.log("allUserShutdown");
+    electron.ipcRenderer.send("all-users", "shutdown");
     this.addLogContent("System","all User Shutdown");
   }
   protected allUserReboot(): void {
-    console.log("allUserReboot");
+    electron.ipcRenderer.send("all-users", "reboot");
     this.addLogContent("System","all User Reboot");
   }
    /**
