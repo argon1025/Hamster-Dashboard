@@ -42,6 +42,7 @@ class App extends React.Component {
 
     // Electron Event Listener
     this.getUserData();
+    this.isonline();
   }
    /**
    * 
@@ -53,7 +54,19 @@ class App extends React.Component {
     electron.ipcRenderer.on("userinfo", (event: any, data: any) => {
       this.addNodeCount();
       console.log(data);
+      
+      // this.setState({ NodeDataList: data })
     });
+  }
+  /**
+   * 
+   * 온라인 체크
+   * 
+   */
+   protected isonline(): void {
+    electron.ipcRenderer.on("isonline", (event: any, data: any) => {
+      console.log(data);
+    })
   }
   /**
    * 
