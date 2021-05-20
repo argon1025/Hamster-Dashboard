@@ -97,6 +97,14 @@ class App extends React.Component {
   }
   /**
    * 
+   * 단일 유저 이벤트 처리
+   * 
+   */
+  protected singleUserShutdown(userinfo: any): void {
+    electron.ipcRenderer.send("single-user", {socketID: userinfo[0].socketID, event: "shutdown"});
+  }
+  /**
+   * 
    * 유저 카운트 변경
    * 
    */
@@ -230,7 +238,7 @@ class App extends React.Component {
             </button>
           </div>
           {/* reboot buttons */}
-          <div className="inline-block mr-2 mt-2" onClick={this.allUserReboot}>
+          <div className="inline-block mr-2 mt-2" onClick={()=> this.singleUserShutdown(this.state.NodeDataList)}>
             <button
               type="button"
               className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg flex items-center"

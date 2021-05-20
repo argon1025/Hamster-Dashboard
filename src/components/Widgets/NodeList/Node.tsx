@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface NodeProps {
   userName: string;
+  socketID: string;
   cpu: number;
   ram: number;
   vga: number;

@@ -19,7 +19,7 @@ class NodeList extends React.Component<NodeListProps> {
     if(!!this.props.NodeListData){
       clientList = this.props.NodeListData.map((ListData)=>{
         return (
-          <Node userName={ListData.clientIP} cpu={ListData.cpu} ram={ListData.ram} vga={ListData.vga} status="ACTIVATE"/>
+          <Node socketID={ListData.socketID} userName={ListData.clientIP} cpu={ListData.cpu} ram={ListData.ram} vga={ListData.vga} status="ACTIVATE"/>
         );
       })
     }else{
