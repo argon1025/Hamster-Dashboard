@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as isDev from 'electron-is-dev';
 import * as path from 'path';
+import socketServer from "./socketServer";
 
 let mainWindow: BrowserWindow;
 
@@ -15,6 +16,7 @@ const createWindow = () => {
       // node환경처럼 사용하기
       nodeIntegration: true,
       enableRemoteModule: true,
+      contextIsolation : false,
       // 개발자도구
       devTools: isDev,
     },
@@ -24,9 +26,10 @@ const createWindow = () => {
   // 개발 중에는 개발 도구에서 호스팅하는 주소에서 로드.
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`);
 
+  // 소켓서버 로드
+  socketServer(mainWindow);
+
   if (isDev) {
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
-  }else{
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 
