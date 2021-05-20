@@ -3,7 +3,7 @@ const socket = io.connect('http://localhost:8484');
 
 socket.emit("connection", "hi!")
 
-socket.emit("userinfo", {"clientName": "Hamster-89"})
+socket.emit("userinfo", {"clientIP": "192.168.0.1"})
 socket.on('shutdown', ()=>{
     console.log("shutdown명령받음");
 })

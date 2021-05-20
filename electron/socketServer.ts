@@ -27,7 +27,7 @@ export default function socketServer(mainWindow: any){
       socket.on("userinfo", function(userdata: any) {
         //online[socket.id] = userdata;
         console.log('user ' + socket.id + ' connection');
-        mainWindow.webContents.send('isOnline', {socketID:socket.id,userName:userdata.clientName});
+        mainWindow.webContents.send('isOnline', {socketID:socket.id,clientIP:userdata.clientIP});
         //offlineList()
       });
       // 클라이언트 종료 이벤트

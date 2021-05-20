@@ -4,17 +4,19 @@ import components from "./components";
 const electron = window.require("electron");
 
 type NodeListData = {
-  userName: string,
+  clientIP: string,
+  socketID: string,
   cpu: number,
   ram: number,
   vga: number,
-  status: string
 };
+
 type logData = {
   date:string,
   logType:string,
   content:string
 };
+
 interface AppState {
   NodeDataList: Array<NodeListData> | undefined;
   totalNodeCount: number;
@@ -52,22 +54,44 @@ class App extends React.Component {
    */
   protected isOnline(): void {
     electron.ipcRenderer.on("isOnline", (event: any, data: any) => {
-      this.addNodeCount();
-      this.addLogContent("System",`${data.socketID} - ${data.userName} is Online`);
+      // NodeDataList를 로드합니다
+      let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+      let newUserData: NodeListData = {
+        "clientIP": `${data.clientIP}`,
+        "socketID": `${data.socketID}`,
+        "cpu": 0,
+        "ram": 0,
+        "vga": 0,
+      }
+
+      if(!!NodeListData){
+        console.log("유저 데이터를 추가합니다");
+        NodeListData.push(newUserData);
+        this.setState({...this.state,NodeDataList:NodeListData})
+      }else{
+        console.log("유저 리스트를 새로 생성합니다");
+        this.setState({...this.state,NodeDataList:[newUserData]});
+      }
+      console.log(this.state);
       //console.log(data);
-      
-      // this.setState({ NodeDataList: data })
+
+      this.addNodeCount();
+      this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Online`);
     });
   }
-  /**
-   * 
-   * 온라인 체크
-   * 
-   */
    protected isOffline(): void {
     electron.ipcRenderer.on("isOffline", (event: any, data: any) => {
+        // NodeDataList를 로드합니다
+        let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+        if(!!NodeListData){
+          NodeListData = NodeListData.filter((object)=>{
+            return object.socketID !== data;
+          })
+          this.setState({...this.state,NodeDataList:NodeListData})
+        }
+        console.log(this.state);
       this.subNodeCount();
-      this.addLogContent("System",`${data.socketID} - ${data.userName} is Offline`);
+      this.addLogContent("System",`${data} - ${data.userName} is Offline`);
       //console.log(data);
     })
   }
@@ -120,7 +144,6 @@ class App extends React.Component {
 
     let scrollBar = window.document.getElementById("console");
     if(scrollBar){
-      console.log(scrollBar.scrollHeight);
       scrollBar.scrollTop = scrollBar.scrollHeight;
     }
 
