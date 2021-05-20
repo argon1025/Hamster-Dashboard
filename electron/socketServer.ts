@@ -15,29 +15,27 @@ export default function socketServer(mainWindow: any){
     // });
     //    // whenever a user connects on port 3000 via
     // // a websocket, log that a user has connected
-    let online = {};
+    //let online = {};
     //온라인유저리스트 클라이언트에 던져주기
-    function onlineList():void {
-      const socketIdList = Object.keys(online)
-      mainWindow.webContents.send('isonline', socketIdList);
+    function offlineList(socketID:any):void {
+      mainWindow.webContents.send('isOffline', socketID);
     }
 
     io.on("connection", function(socket: any) {
-      console.log(online);
       
       //클라이언트와 서버 데이터 교환
       socket.on("userinfo", function(userdata: any) {
-        online[socket.id] = userdata;
+        //online[socket.id] = userdata;
         console.log('user ' + socket.id + ' connection');
-        mainWindow.webContents.send('userinfo', userdata);
-        onlineList()
+        mainWindow.webContents.send('isOnline', {socketID:socket.id,userName:userdata.clientName});
+        //offlineList()
       });
       // 클라이언트 종료 이벤트
       socket.on('disconnect', function(){
         console.log('user ' + socket.id + ' disconnected');
         // remove saved socket from users object
-        delete online[socket.id];
-        onlineList()
+        //delete online[socket.id];
+        offlineList(socket.id)
       });
       //전체 유저 이벤트
       ipcMain.on('all-users', (event: any, data: any)=>{

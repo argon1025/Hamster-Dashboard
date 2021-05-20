@@ -41,8 +41,8 @@ class App extends React.Component {
     this.allUserReboot = this.allUserReboot.bind(this);
 
     // Electron Event Listener
-    this.getUserData();
-    this.isonline();
+    this.isOnline();
+    this.isOffline();
   }
    /**
    * 
@@ -50,10 +50,11 @@ class App extends React.Component {
    * Electron -> React
    * 
    */
-  protected getUserData(): void {
-    electron.ipcRenderer.on("userinfo", (event: any, data: any) => {
+  protected isOnline(): void {
+    electron.ipcRenderer.on("isOnline", (event: any, data: any) => {
       this.addNodeCount();
-      console.log(data);
+      this.addLogContent("System",`${data.socketID} - ${data.userName} is Online`);
+      //console.log(data);
       
       // this.setState({ NodeDataList: data })
     });
@@ -63,9 +64,11 @@ class App extends React.Component {
    * 온라인 체크
    * 
    */
-   protected isonline(): void {
-    electron.ipcRenderer.on("isonline", (event: any, data: any) => {
-      console.log(data);
+   protected isOffline(): void {
+    electron.ipcRenderer.on("isOffline", (event: any, data: any) => {
+      this.subNodeCount();
+      this.addLogContent("System",`${data.socketID} - ${data.userName} is Offline`);
+      //console.log(data);
     })
   }
   /**
