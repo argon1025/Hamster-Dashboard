@@ -26,6 +26,7 @@ const createWindow = () => {
   // 개발 중에는 개발 도구에서 호스팅하는 주소에서 로드.
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`);
 
+  // 소켓서버 로드
   socketServer(mainWindow);
 
   if (isDev) {

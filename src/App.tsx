@@ -1,5 +1,6 @@
 import * as React from "react";
 import components from "./components";
+// 일렉트론 이벤트 수신용
 const electron = window.require("electron");
 
 
@@ -29,23 +30,16 @@ class App extends React.Component {
     this.setTotalNodeCount = this.setTotalNodeCount.bind(this);
     this.addNodeCount = this.addNodeCount.bind(this);
     this.subNodeCount = this.subNodeCount.bind(this);
-  }
 
-  componentDidMount(){
-    //NodeFataList 검증 후 totalNodeCount 반영
+    // Electron Event Listener
     this.getUserData()
   }
-  componentDidUpdate(){
-    console.log(this.state.NodeDataList);
-    
-  }
-
+  // Electron -> React
   protected getUserData():void{
     electron.ipcRenderer.on('userinfo', (event: any, data: any) => {
       this.setState({...this.state.NodeDataList, NodeDataList: data});
     });
   }
-
   protected setTotalNodeCount(count:number):void{
     this.setState({...this.state,totalNodeCount:count});
   }

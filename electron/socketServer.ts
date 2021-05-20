@@ -3,7 +3,7 @@ import * as socketio from "socket.io";
 import * as path from "path";
 
 
-export default function a(mainWindow: any){
+export default function socketServer(mainWindow: any){
     const app = express();
     app.set("port", 8484);
     
