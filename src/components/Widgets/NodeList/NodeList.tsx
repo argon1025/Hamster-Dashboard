@@ -6,11 +6,15 @@ type NodeListData = {
   socketID: string,
   cpu: number,
   ram: number,
-  vga: number,
+  vga: number
 };
 
 interface NodeListProps {
   NodeListData: Array<NodeListData>|undefined;
+  userCommandRun(socketID:string): void;
+  userShutdown(socketID:string): void;
+  userReboot(socketID:string): void;
+  userFileDownload(socketID:string): void;
 }
 
 class NodeList extends React.Component<NodeListProps> {
@@ -19,7 +23,7 @@ class NodeList extends React.Component<NodeListProps> {
     if(!!this.props.NodeListData){
       clientList = this.props.NodeListData.map((ListData)=>{
         return (
-          <Node userName={ListData.clientIP} cpu={ListData.cpu} ram={ListData.ram} vga={ListData.vga} status="ACTIVATE"/>
+          <Node userName={ListData.clientIP} cpu={ListData.cpu} ram={ListData.ram} vga={ListData.vga} socketID={ListData.socketID} status="ACTIVATE" userCommandRun={this.props.userCommandRun} userShutdown={this.props.userShutdown} userReboot={this.props.userReboot} userFileDownload={this.props.userFileDownload}/>
         );
       })
     }else{
