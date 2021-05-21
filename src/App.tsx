@@ -21,6 +21,10 @@ interface AppState {
   NodeDataList: Array<NodeListData> | undefined;
   totalNodeCount: number;
   logData: Array<logData>;
+  modal: boolean;
+  modalType: string;
+  modalMessage: string;
+  modalTargetSocketID:string;
 }
 
 class App extends React.Component {
@@ -30,7 +34,11 @@ class App extends React.Component {
     totalNodeCount: 0,
     logData: [{  date:"[√]",
       logType:"System",
-      content:"System loading complete"}]
+      content:"System loading complete"}],
+    modal:false,
+    modalType:"",
+    modalMessage:"",
+    modalTargetSocketID:""
   };
 
   constructor(props: {} | Readonly<{}>) {
@@ -41,7 +49,11 @@ class App extends React.Component {
     this.subNodeCount = this.subNodeCount.bind(this);
     this.allUserShutdown = this.allUserShutdown.bind(this);
     this.allUserReboot = this.allUserReboot.bind(this);
-
+    this.userCommandRun = this.userCommandRun.bind(this);
+    this.userFileDownload = this.userFileDownload.bind(this);
+    this.userReboot = this.userReboot.bind(this);
+    this.userShutdown = this.userShutdown.bind(this);
+    this.modalOpen = this.modalOpen.bind(this);
     // Electron Event Listener
     this.isOnline();
     this.isOffline();
@@ -124,6 +136,77 @@ class App extends React.Component {
     electron.ipcRenderer.send("all-users", "reboot");
     this.addLogContent("System","all User Reboot");
   }
+  /**
+   * 
+   * 특정 유저 제어 이벤트
+   * 
+   */
+  // 특정 유저 커맨드 실행 요청
+  protected userCommandRun(socketID:string,command?:string) {
+    if(!!command){
+    // 매개변수 커맨드가 존재할경우
+    this.addLogContent("System",`${socketID}/Command Execution $ ${command}`);
+    }else{
+    // 매개변수 커맨드가 존재하지 않을경우
+    // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
+    this.modalOpen("Command Execution",`${socketID} run command`,socketID);
+    }
+  }
+  // 특정 유저 시스템 종료 요청
+  protected userShutdown(socketID:string): void {
+    this.addLogContent("System",`${socketID}/User Shutdown $`);
+  }
+  // 특정 유저 재부팅 요청
+  protected userReboot(socketID:string): void {
+    this.addLogContent("System",`${socketID}/User Reboot $`);
+  }
+  // 특정 유저 파일 다운로드 요청
+  protected userFileDownload(socketID:string,url?:string){
+    if(!!url){
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent("System",`${socketID}/FileDownload@${url}`);
+      }else{
+      // 매개변수 커맨드가 존재하지 않을경우
+      // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
+      this.modalOpen("File Download",`${socketID} file download`,socketID);
+      console.log(`${socketID} run command ${socketID}`)
+      //this.test();
+      }
+  }
+  /**
+   * 
+   * 모달 제어 이벤트
+   * 유저 버튼 이벤트 -> 아래 모달 메서드 호출 modalOpen -> 모달 입력 -> 데이터 수신 modalInput
+   *  -> 수신된 데이터 타입을 보고 다시 유저 버튼 이벤트 호출
+   * 
+   */
+  // 모달 실행
+  protected modalOpen = (modalType:string,modalMessage:string,socketID:string):void =>{
+    this.setState({...this.state, modalType:modalType, modalMessage:modalMessage, modal:true, modalTargetSocketID:socketID});
+  }
+  // 모달 종료
+  protected modalClose = ():void => {
+    this.setState({...this.state, modalType:"", modalMessage:"", modal:false});
+  }
+  // 모달 send 버튼 클릭시 호출되는 이벤트
+  protected modalInput = (inputData:string,socketID:string):void => {
+    // 이벤트 재호출
+    const INPUT_TYPE = this.state.modalType;
+    switch (INPUT_TYPE) {
+      case "Command Execution":
+        this.userCommandRun(socketID,inputData);
+        break;
+      case "File Download":
+        this.userFileDownload(socketID,inputData);
+        break;
+      default:
+        console.log("modalInput call event error");
+        break;
+    }
+    // 모달 종료
+    this.setState({...this.state, modalType:"", modalMessage:"", modal:false});
+
+  }
    /**
    * 
    * 로깅
@@ -150,15 +233,17 @@ class App extends React.Component {
   }
 
   render() {
+    let MODAL_STAGE = this.state.modal;
     let logList:any;
     logList = this.state.logData.map((logListData)=>{
       return (
         <p className="pb-1">{logListData.date} [{logListData.logType}] {logListData.content}</p>
       );
     });
-
     return (
       <div className="w-full h-full bg-gray-50 font-main-font">
+        <components.Modal modalTargetSocketID={this.state.modalTargetSocketID} modal={this.state.modal} modalType={this.state.modalType} modalMessage={this.state.modalMessage} modalInput={this.modalInput} modalClose={this.modalClose}/>
+
         <components.Navbar />
 
         <div className="flex flex-row-reverse m-3">
@@ -252,7 +337,7 @@ class App extends React.Component {
           </div>
         </div>
 
-        <components.NodeList NodeListData={this.state.NodeDataList} />
+        <components.NodeList NodeListData={this.state.NodeDataList} userCommandRun={this.userCommandRun} userShutdown={this.userShutdown} userReboot={this.userReboot} userFileDownload={this.userFileDownload}/>
       </div>
     );
   }
