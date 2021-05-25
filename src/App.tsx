@@ -67,7 +67,11 @@ class App extends React.Component {
   protected isOnline(): void {
     electron.ipcRenderer.on("isOnline", (event: any, data: any) => {
       // NodeDataList를 로드합니다
+      console.log("1");
       let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+      console.log(data);
+      
+      console.log("2");
       let newUserData: NodeListData = {
         "clientIP": `${data.clientIP}`,
         "socketID": `${data.socketID}`,
@@ -76,6 +80,7 @@ class App extends React.Component {
         "vga": 0,
       }
 
+      console.log("3");
       if(!!NodeListData){
         console.log("유저 데이터를 추가합니다");
         NodeListData.push(newUserData);
@@ -146,6 +151,7 @@ class App extends React.Component {
     if(!!command){
     // 매개변수 커맨드가 존재할경우
     this.addLogContent("System",`${socketID}/Command Execution $ ${command}`);
+
     }else{
     // 매개변수 커맨드가 존재하지 않을경우
     // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
@@ -155,10 +161,12 @@ class App extends React.Component {
   // 특정 유저 시스템 종료 요청
   protected userShutdown(socketID:string): void {
     this.addLogContent("System",`${socketID}/User Shutdown $`);
+    electron.ipcRenderer.send("single-user", {socketID: socketID, command: 'shutdown'});
   }
   // 특정 유저 재부팅 요청
   protected userReboot(socketID:string): void {
     this.addLogContent("System",`${socketID}/User Reboot $`);
+    electron.ipcRenderer.send("single-user", {socketID: socketID, command: 'reboot'});
   }
   // 특정 유저 파일 다운로드 요청
   protected userFileDownload(socketID:string,url?:string){
