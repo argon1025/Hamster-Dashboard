@@ -75,7 +75,10 @@ class App extends React.Component {
 
   protected logEvent(): void {
     electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
-      this.addLogContent("System",`${data.clientIP}/${data.socketID} -> ${data.log}`);
+      console.log(data.log);
+      //data.log = data.log.replace(new RegExp('\r?\n','g'), '<br />');
+      this.addLogContent("System",`${data.clientIP}/${data.socketID}
+      ${data.log}`);
     })
   }
    /**
@@ -273,7 +276,7 @@ class App extends React.Component {
     let logList:any;
     logList = this.state.logData.map((logListData)=>{
       return (
-        <p className="pb-1">{logListData.date} [{logListData.logType}] {logListData.content}</p>
+        <div className="pb-1 whitespace-pre-line">{logListData.date} [{logListData.logType}] {logListData.content}</div>
       );
     });
     return (
@@ -310,7 +313,7 @@ class App extends React.Component {
                 className="pl-3 pt-3 pb-12 h-full overflow-y-auto overscroll-contain text-green-200 font-mono text-xs bg-black"
                 id="console"
               >
-                <p className="pb-1 pt-2">Hamster Dashboard Manager @ 2021</p>
+                <div className="pb-1 pt-2">Hamster Dashboard Manager @ 2021</div>
                 {logList}
               </div>
             </div>
