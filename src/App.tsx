@@ -54,9 +54,29 @@ class App extends React.Component {
     this.userReboot = this.userReboot.bind(this);
     this.userShutdown = this.userShutdown.bind(this);
     this.modalOpen = this.modalOpen.bind(this);
+    this.isOffline = this.isOffline.bind(this);
+    this.isOnline = this.isOnline.bind(this);
+    this.logEvent = this.logEvent.bind(this);
     // Electron Event Listener
+    console.log("생성자");
+    // this.isOnline();
+    // this.isOffline();
+  }
+  componentDidMount(){
     this.isOnline();
     this.isOffline();
+    this.logEvent();
+  }
+  componentWillUnmount(){
+    electron.ipcRenderer.removeListener("isOnline")
+    electron.ipcRenderer.removeListener("isOffline")
+    electron.ipcRenderer.removeListener("logEvent")
+  }
+
+  protected logEvent(): void {
+    electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
+      this.addLogContent("System",`${data.clientIP}/${data.socketID} -> ${data.log}`);
+    })
   }
    /**
    * 
@@ -66,8 +86,14 @@ class App extends React.Component {
    */
   protected isOnline(): void {
     electron.ipcRenderer.on("isOnline", (event: any, data: any) => {
+      console.log(event);
+      
       // NodeDataList를 로드합니다
+      console.log("1");
       let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+      console.log(data);
+      
+      console.log("2");
       let newUserData: NodeListData = {
         "clientIP": `${data.clientIP}`,
         "socketID": `${data.socketID}`,
@@ -76,6 +102,7 @@ class App extends React.Component {
         "vga": 0,
       }
 
+      console.log("3");
       if(!!NodeListData){
         console.log("유저 데이터를 추가합니다");
         NodeListData.push(newUserData);
@@ -103,7 +130,7 @@ class App extends React.Component {
         }
         console.log(this.state);
       this.subNodeCount();
-      this.addLogContent("System",`${data} - ${data.userName} is Offline`);
+      this.addLogContent("System",`${data} - ${data.clientIP} is Offline`);
       //console.log(data);
     })
   }
@@ -129,11 +156,13 @@ class App extends React.Component {
    * 
    */
   protected allUserShutdown(): void {
-    electron.ipcRenderer.send("all-users", "shutdown");
+    electron.ipcRenderer.send("all-users", "shutdown")
+    console.log("shutdown");
+    
     this.addLogContent("System","all User Shutdown");
   }
   protected allUserReboot(): void {
-    electron.ipcRenderer.send("all-users", "reboot");
+    electron.ipcRenderer.send("all-users", "shutdown")
     this.addLogContent("System","all User Reboot");
   }
   /**
@@ -146,6 +175,7 @@ class App extends React.Component {
     if(!!command){
     // 매개변수 커맨드가 존재할경우
     this.addLogContent("System",`${socketID}/Command Execution $ ${command}`);
+    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'commnand', command: command});
     }else{
     // 매개변수 커맨드가 존재하지 않을경우
     // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
@@ -155,16 +185,20 @@ class App extends React.Component {
   // 특정 유저 시스템 종료 요청
   protected userShutdown(socketID:string): void {
     this.addLogContent("System",`${socketID}/User Shutdown $`);
+    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'shutdown'});
   }
   // 특정 유저 재부팅 요청
   protected userReboot(socketID:string): void {
     this.addLogContent("System",`${socketID}/User Reboot $`);
+    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'reboot'});
   }
   // 특정 유저 파일 다운로드 요청
   protected userFileDownload(socketID:string,url?:string){
     if(!!url){
       // 매개변수 커맨드가 존재할경우
+      console.log(url)
       this.addLogContent("System",`${socketID}/FileDownload@${url}`);
+      electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'filedown', url: url});
       }else{
       // 매개변수 커맨드가 존재하지 않을경우
       // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
@@ -233,6 +267,8 @@ class App extends React.Component {
   }
 
   render() {
+    console.log("redner");
+
     let MODAL_STAGE = this.state.modal;
     let logList:any;
     logList = this.state.logData.map((logListData)=>{
