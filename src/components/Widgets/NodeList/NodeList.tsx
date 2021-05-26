@@ -27,7 +27,7 @@ class NodeList extends React.Component<NodeListProps> {
         );
       })
     }else{
-      clientList = "No Client";
+      clientList = <div className="flex text-gray-300 m-5">There are no connected users.</div>;
     }
     return (
         <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5">

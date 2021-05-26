@@ -285,48 +285,8 @@ class App extends React.Component {
 
         <components.Navbar />
 
-        <div className="flex flex-row-reverse m-3">
-          {/* logging component */}
-          <div className="w-full mx-auto">
-            <div className="w-full shadow-2xl subpixel-antialiased rounded-lg h-64 bg-black border-black mx-auto overflow-hidden">
-              <div
-                className="flex items-center h-6 rounded-lg-t bg-gray-200 border-b border-gray-500 text-center text-black"
-                id="headerTerminal"
-              >
-                <div
-                  className="flex ml-2 items-center text-center border-red-900 bg-red-500 shadow-inner rounded-full w-3 h-3"
-                  id="closebtn"
-                ></div>
-                <div
-                  className="ml-2 border-yellow-900 bg-yellow-500 shadow-inner rounded-full w-3 h-3"
-                  id="minbtn"
-                ></div>
-                <div
-                  className="ml-2 border-green-900 bg-green-500 shadow-inner rounded-full w-3 h-3"
-                  id="maxbtn"
-                ></div>
-                <div className="mx-auto pr-16" id="terminaltitle">
-                  <p className="text-center text-sm">System Log</p>
-                </div>
-              </div>
-              <div
-                className="pl-3 pt-3 pb-12 h-full overflow-y-auto overscroll-contain text-green-200 font-mono text-xs bg-black"
-                id="console"
-              >
-                <div className="pb-1 pt-2">Hamster Dashboard Manager @ 2021</div>
-                {logList}
-              </div>
-            </div>
-          </div>
-          {/* logging component */}
-          <components.CounterWiget
-            counterType="Online"
-            counterData={this.state.totalNodeCount}
-          />
-        </div>
-
-        {/* utility buttons */}
-        <div className="flex flex-row-reverse m-3">
+                {/* utility buttons */}
+                <div className="flex flex-row-reverse m-3">
           {/* shutdown buttons */}
           <div
             className="inline-block mr-2 mt-2"
@@ -373,6 +333,46 @@ class App extends React.Component {
               </svg>
               All User reboot
             </button>
+          </div>
+          {/* logging component */}
+          <components.CounterWiget
+            counterType="Online"
+            counterData={this.state.totalNodeCount}
+          />
+        </div>
+
+        <div className="flex m-4">
+          {/* logging component */}
+          <div className="w-full mx-auto">
+            <div className="w-full shadow-2xl subpixel-antialiased rounded-lg h-96 bg-black border-black mx-auto overflow-hidden">
+              <div
+                className="flex items-center h-6 rounded-lg-t bg-gray-200 border-b border-gray-500 text-center text-black"
+                id="headerTerminal"
+              >
+                <div
+                  className="flex ml-2 items-center text-center border-red-900 bg-red-500 shadow-inner rounded-full w-3 h-3"
+                  id="closebtn"
+                ></div>
+                <div
+                  className="ml-2 border-yellow-900 bg-yellow-500 shadow-inner rounded-full w-3 h-3"
+                  id="minbtn"
+                ></div>
+                <div
+                  className="ml-2 border-green-900 bg-green-500 shadow-inner rounded-full w-3 h-3"
+                  id="maxbtn"
+                ></div>
+                <div className="mx-auto pr-16" id="terminaltitle">
+                  <p className="text-center text-sm">System Log</p>
+                </div>
+              </div>
+              <div
+                className="pl-3 pt-3 pb-12 h-full overflow-y-auto overscroll-contain text-green-200 font-mono text-xs bg-black"
+                id="console"
+              >
+                <div className="pb-1 pt-2">Hamster Dashboard Manager @ 2021</div>
+                {logList}
+              </div>
+            </div>
           </div>
         </div>
 
