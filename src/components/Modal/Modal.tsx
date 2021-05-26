@@ -36,6 +36,9 @@ class Modal extends React.Component<ModalProps> {
                   <p className="mb-2 font-semibold text-gray-700">
                     {MODAL_MESSAGE}
                   </p>
+                  <p className="mb-2 font-semibold text-gray-700">
+                    Last Command : {this.state.inputData}
+                  </p>
                   <textarea
                     onChange={this.inputDataIsChange}
                     name="inputData"
