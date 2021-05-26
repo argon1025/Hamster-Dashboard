@@ -3,7 +3,7 @@ import * as React from "react";
 class Navbar extends React.Component {
   render() {
     return (
-      <div className="flex flwx-row p-5">
+      <div className="flex flwx-row p-5 stop-dragging">
         <div>
           <svg
             id="Capa_1"

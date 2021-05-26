@@ -286,7 +286,7 @@ class App extends React.Component {
         <components.Navbar />
 
                 {/* utility buttons */}
-                <div className="flex flex-row-reverse m-3">
+                <div className="flex flex-row-reverse m-3 stop-dragging">
           {/* shutdown buttons */}
           <div
             className="inline-block mr-2 mt-2"

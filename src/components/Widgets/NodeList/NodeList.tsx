@@ -30,7 +30,7 @@ class NodeList extends React.Component<NodeListProps> {
       clientList = <div className="flex text-gray-300 m-5">There are no connected users.</div>;
     }
     return (
-        <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5">
+        <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5 stop-dragging">
         <table className="min-w-max w-full table-auto">
           <thead>
             <tr className="bg-gradient-to-r from-green-400 to-blue-500 text-white uppercase text-sm leading-normal">
