@@ -49,7 +49,7 @@ class Modal extends React.Component<ModalProps> {
                   
                 </div>
                 <div className="flex flex-row items-center justify-between p-5 bg-white border-t border-gray-200 rounded-bl-lg rounded-br-lg">
-                  <p onClick={this.props.modalClose} className="font-semibold text-gray-600">Cancel</p>
+                  <p onClick={this.props.modalClose} className="font-semibold text-gray-600 cursor-pointer">Cancel</p>
                   <button onClick={this.sendButton} className="px-4 py-2 text-white font-semibold bg-blue-500 rounded">
                     Send
                   </button>
