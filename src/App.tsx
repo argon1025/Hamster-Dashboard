@@ -165,7 +165,7 @@ class App extends React.Component {
     this.addLogContent("System","all User Shutdown");
   }
   protected allUserReboot(): void {
-    electron.ipcRenderer.send("all-users", "shutdown")
+    electron.ipcRenderer.send("all-users", "reboot")
     this.addLogContent("System","all User Reboot");
   }
   /**
