@@ -57,22 +57,25 @@ class App extends React.Component {
     this.isOffline = this.isOffline.bind(this);
     this.isOnline = this.isOnline.bind(this);
     this.logEvent = this.logEvent.bind(this);
-    // Electron Event Listener
-    console.log("생성자");
-    // this.isOnline();
-    // this.isOffline();
+    this.socketConnectSuccess = this.socketConnectSuccess.bind(this);
   }
   componentDidMount(){
     this.isOnline();
     this.isOffline();
     this.logEvent();
+    this.socketConnectSuccess();
   }
   componentWillUnmount(){
     electron.ipcRenderer.removeListener("isOnline")
     electron.ipcRenderer.removeListener("isOffline")
     electron.ipcRenderer.removeListener("logEvent")
   }
-
+  protected socketConnectSuccess(): void {
+    console.log("a?");
+    electron.ipcRenderer.on("socketConnectSuccess", (event: any, data: any) => {
+    console.log("소켓서버에 연결 성공!");
+    })
+  }
   protected logEvent(): void {
     electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
       console.log(data.log);
