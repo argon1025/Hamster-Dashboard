@@ -21,7 +21,6 @@ const createWindow = () => {
       devTools: isDev,
     },
   });
-  socketClient(mainWindow);
   // production에서는 패키지 내부 리소스에 접근.
   // 개발 중에는 개발 도구에서 호스팅하는 주소에서 로드.
   mainWindow.loadURL(
@@ -33,7 +32,9 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
-
+  mainWindow.on("ready-to-show", ()=>{
+    socketClient(mainWindow);
+  })
   // Emitted when the window is closed.
   mainWindow.on("closed", () => (mainWindow = undefined!));
   // mainWindow.webContents.on("did-finish-load", () => socketServer(mainWindow));

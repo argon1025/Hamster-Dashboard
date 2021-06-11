@@ -57,24 +57,19 @@ class App extends React.Component {
     this.isOffline = this.isOffline.bind(this);
     this.isOnline = this.isOnline.bind(this);
     this.logEvent = this.logEvent.bind(this);
-    this.socketConnectSuccess = this.socketConnectSuccess.bind(this);
+    this.socketServerOffline = this.socketServerOffline.bind(this)
   }
   componentDidMount(){
     this.isOnline();
     this.isOffline();
     this.logEvent();
-    this.socketConnectSuccess();
+    this.socketServerOffline();
   }
   componentWillUnmount(){
     electron.ipcRenderer.removeListener("isOnline")
     electron.ipcRenderer.removeListener("isOffline")
     electron.ipcRenderer.removeListener("logEvent")
-  }
-  protected socketConnectSuccess(): void {
-    console.log("a?");
-    electron.ipcRenderer.on("socketConnectSuccess", (event: any, data: any) => {
-    console.log("소켓서버에 연결 성공!");
-    })
+    electron.ipcRenderer.removeListener("socketServerOffline")
   }
   protected logEvent(): void {
     electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
@@ -95,11 +90,9 @@ class App extends React.Component {
       console.log(event);
       
       // NodeDataList를 로드합니다
-      console.log("1");
       let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
       console.log(data);
       
-      console.log("2");
       let newUserData: NodeListData = {
         "clientIP": `${data.clientIP}`,
         "socketID": `${data.socketID}`,
@@ -108,7 +101,6 @@ class App extends React.Component {
         "vga": 0,
       }
 
-      console.log("3");
       if(!!NodeListData){
         console.log("유저 데이터를 추가합니다");
         NodeListData.push(newUserData);
@@ -124,21 +116,29 @@ class App extends React.Component {
       this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Online`);
     });
   }
-   protected isOffline(): void {
+  protected isOffline(): void {
     electron.ipcRenderer.on("isOffline", (event: any, data: any) => {
+      
         // NodeDataList를 로드합니다
         let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
         if(!!NodeListData){
           NodeListData = NodeListData.filter((object)=>{
-            return object.socketID !== data;
+            return object.socketID !== data.socketID;
           })
           this.setState({...this.state,NodeDataList:NodeListData})
         }
         console.log(this.state);
       this.subNodeCount();
-      this.addLogContent("System",`${data} - ${data.clientIP} is Offline`);
+      this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Offline`);
       //console.log(data);
     })
+  }
+  protected socketServerOffline(): void {
+    electron.ipcRenderer.on("socketServerOffline", (event: any, data: any) => {
+    this.setState({...this.state,NodeDataList: null})
+    this.cleanNodeCount();
+    this.addLogContent("System",`disconnect SocketServer`);
+    });
   }
   /**
    * 
@@ -155,6 +155,9 @@ class App extends React.Component {
   protected subNodeCount(): void {
     let nowTotalNodeCount: number = this.state.totalNodeCount - 1;
     this.setState({ ...this.state, totalNodeCount: nowTotalNodeCount });
+  }
+  protected cleanNodeCount(): void {
+    this.setState({ ...this.state, totalNodeCount: 0 });
   }
    /**
    * 
