@@ -73,7 +73,7 @@ class App extends React.Component {
   }
   protected logEvent(): void {
     electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
-      console.log(data.log);
+      console.log(data);
       //data.log = data.log.replace(new RegExp('\r?\n','g'), '<br />');
       this.addLogContent("System",`${data.clientIP}/${data.socketID}
       ${data.log}`);
@@ -100,7 +100,8 @@ class App extends React.Component {
         "ram": 0,
         "vga": 0,
       }
-
+      console.log(newUserData);
+      
       if(!!NodeListData){
         console.log("유저 데이터를 추가합니다");
         NodeListData.push(newUserData);
@@ -114,22 +115,27 @@ class App extends React.Component {
 
       this.addNodeCount();
       this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Online`);
+
     });
   }
   protected isOffline(): void {
     electron.ipcRenderer.on("isOffline", (event: any, data: any) => {
+      console.log(data);
       
         // NodeDataList를 로드합니다
         let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+        // 데이터가 있다?
         if(!!NodeListData){
           NodeListData = NodeListData.filter((object)=>{
-            return object.socketID !== data.socketID;
+            if(object.socketID === data) {
+              this.subNodeCount();
+              this.addLogContent("System",`${data} is Offline`);
+            }
+            return object.socketID !== data;
           })
           this.setState({...this.state,NodeDataList:NodeListData})
         }
         console.log(this.state);
-      this.subNodeCount();
-      this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Offline`);
       //console.log(data);
     })
   }
@@ -173,6 +179,15 @@ class App extends React.Component {
   protected allUserReboot(): void {
     electron.ipcRenderer.send("all-users", "reboot")
     this.addLogContent("System","all User Reboot");
+  }
+  protected allUserStartTrex(): void {
+    const UserList: any = this.state.NodeDataList;
+    let sortUserList = {};
+    sortUserList = UserList.filter( (object: any) =>{
+      console.log(object);
+      
+    })
+    
   }
   /**
    * 
