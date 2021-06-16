@@ -31,58 +31,24 @@ export default function socketClient(mainWindow: any) {
     console.log(socketID + "is disconnect");
     mainWindow.webContents.send("isOffline", socketID);
   });
-  //전체 유저 이벤트
-  ipcMain.on("all-users", (event: any, data: any) => {
-    console.log("all-users");
-    socket.emit("all");
-    switch (data) {
-      case "shutdown":
-        socket.emit("all-users-shutdown", socket.id);
-        break;
-      case "reboot":
-        socket.emit("all-users-reboot", socket.id);
-        break;
-      case "filedown":
-        socket.emit("all-users-filedown", socket.id, data.url);
-        break;
-      case "commnand":
-        socket.emit("all-users-commnand", socket.id, data.command);
-        break;
-      default:
-        break;
-    }
-  });
   // //단일 유저 이벤트
   ipcMain.on("single-user", (event: any, data: any) => {
     console.log("single-users");
-    console.log(data);
     const DashBoardID = socket.id;
     // 클라이언트 -> 소켓
     // param:
     // DashBoardID
     // data = { commnadtype, clientsocketID, url?, command? }
     socket.emit("single-users", DashBoardID, data);
-    // switch (data.type) {
-    //   case "shutdown":
-    //     socket.emit("single-user", "shutdown", socket.id, data.socketID);
-    //     break;
-    //   case "reboot":
-    //     socket.emit("single-user", "reboot", socket.id, data.socketID);
-    //     break;
-    //   case "filedown":
-    //     socket.emit("single-user", socket.id, data.url, data.socketID);
-    //     break;
-    //   case "commnand":
-    //     socket.emit(
-    //       "single-user-commnand",
-    //       socket.id,
-    //       data.command,
-    //       data.socketID
-    //     );
-    //     break;
-    //   default:
-    //     break;
-    // }
+  });
+  //전체 유저 이벤트
+  ipcMain.on("all-users", (event: any, data: any) => {
+    console.log("all-users");
+    const DashBoardID = socket.id;
+    // 클라이언트 -> 소켓
+    // param:
+    // data = { commnadtype, clientsocketID, url?, command? }
+    socket.emit("all-users", DashBoardID, data);
   });
   // logEvent
   socket.on("dashboard_logEvent", function (clientIP, socketID, result) {
@@ -91,7 +57,7 @@ export default function socketClient(mainWindow: any) {
     mainWindow.webContents.send("logEvent", {
       socketID: socketID,
       clientIP: clientIP,
-      log: result.result,
+      log: result,
     });
   });
 }

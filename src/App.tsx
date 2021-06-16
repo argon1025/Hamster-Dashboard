@@ -179,20 +179,25 @@ class App extends React.Component {
    *
    */
   protected allUserShutdown(): void {
-    electron.ipcRenderer.send("all-users", "shutdown");
+    electron.ipcRenderer.send("all-users", {
+      type: "shutdown",
+    });
     console.log("shutdown");
 
     this.addLogContent("System", "all User Shutdown");
   }
   protected allUserReboot(): void {
-    electron.ipcRenderer.send("all-users", "reboot");
+    electron.ipcRenderer.send("all-users", {type: "reboot"});
     this.addLogContent("System", "all User Reboot");
   }
   protected allUserCommandRun(command?: string) {
     if (!!command) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `Command Execution All users $ ${command}`);
-      electron.ipcRenderer.send("all-users", "reboot");
+      electron.ipcRenderer.send("all-users",{ 
+        type: "commnand",
+        command: command,
+       });
     } else {
       this.modalOpen(
         "Command Execution All users",
@@ -205,7 +210,9 @@ class App extends React.Component {
     if (!!url) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `All users Download files to ${url}`);
-      electron.ipcRenderer.send("all-users", "reboot");
+      electron.ipcRenderer.send("all-users", {        
+      type: "filedown",
+      url: url,  });
     } else {
       this.modalOpen(
         "All users Download files",
@@ -220,56 +227,56 @@ class App extends React.Component {
    *
    */
   // 특정 유저 커맨드 실행 요청
-  protected userCommandRun(socketID: string, command?: string) {
+  protected userCommandRun(clientID: string, command?: string) {
     if (!!command) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent(
         "System",
-        `${socketID}/Command Execution $ ${command}`
+        `${clientID}/Command Execution $ ${command}`
       );
       electron.ipcRenderer.send("single-user", {
-        socketID: socketID,
+        clientID: clientID,
         type: "commnand",
         command: command,
       });
     } else {
       // 매개변수 커맨드가 존재하지 않을경우
       // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
-      this.modalOpen("Command Execution", `${socketID} run command`, socketID);
+      this.modalOpen("Command Execution", `${clientID} run command`, clientID);
     }
   }
   // 특정 유저 시스템 종료 요청
-  protected userShutdown(socketID: string): void {
-    this.addLogContent("System", `${socketID}/User Shutdown $`);
+  protected userShutdown(clientID: string): void {
+    this.addLogContent("System", `${clientID}/User Shutdown $`);
     electron.ipcRenderer.send("single-user", {
-      socketID: socketID,
+      clientID: clientID,
       type: "shutdown",
     });
   }
   // 특정 유저 재부팅 요청
-  protected userReboot(socketID: string): void {
-    this.addLogContent("System", `${socketID}/User Reboot $`);
+  protected userReboot(clientID: string): void {
+    this.addLogContent("System", `${clientID}/User Reboot $`);
     electron.ipcRenderer.send("single-user", {
-      socketID: socketID,
+      clientID: clientID,
       type: "reboot",
     });
   }
   // 특정 유저 파일 다운로드 요청
-  protected userFileDownload(socketID: string, url?: string) {
+  protected userFileDownload(clientID: string, url?: string) {
     if (!!url) {
       // 매개변수 커맨드가 존재할경우
       console.log(url);
-      this.addLogContent("System", `${socketID}/FileDownload@${url}`);
+      this.addLogContent("System", `${clientID}/FileDownload@${url}`);
       electron.ipcRenderer.send("single-user", {
-        socketID: socketID,
+        clientID: clientID,
         type: "filedown",
         url: url,
       });
     } else {
       // 매개변수 커맨드가 존재하지 않을경우
       // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
-      this.modalOpen("File Download", `${socketID} file download`, socketID);
-      console.log(`${socketID} run command ${socketID}`);
+      this.modalOpen("File Download", `${clientID} file download`, clientID);
+      console.log(`${clientID} run command ${clientID}`);
       //this.test();
     }
   }
