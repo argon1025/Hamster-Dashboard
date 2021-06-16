@@ -34,6 +34,7 @@ export default function socketClient(mainWindow: any) {
   //전체 유저 이벤트
   ipcMain.on("all-users", (event: any, data: any) => {
     console.log("all-users");
+    socket.emit("all");
     switch (data) {
       case "shutdown":
         socket.emit("all-users-shutdown", socket.id);

@@ -192,6 +192,7 @@ class App extends React.Component {
     if (!!command) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `Command Execution All users $ ${command}`);
+      electron.ipcRenderer.send("all-users", "reboot");
     } else {
       this.modalOpen(
         "Command Execution All users",
@@ -204,6 +205,7 @@ class App extends React.Component {
     if (!!url) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `All users Download files to ${url}`);
+      electron.ipcRenderer.send("all-users", "reboot");
     } else {
       this.modalOpen(
         "All users Download files",
