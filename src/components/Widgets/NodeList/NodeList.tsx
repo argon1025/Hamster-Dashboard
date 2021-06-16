@@ -2,40 +2,51 @@ import * as React from "react";
 import Node from "./Node";
 
 type NodeListData = {
-  clientIP: string,
-  socketID: string,
-  cpu: number,
-  ram: number,
-  vga: number
+  clientIP: string;
+  socketID: string;
 };
 
 interface NodeListProps {
-  NodeListData: Array<NodeListData>|undefined;
-  userCommandRun(socketID:string): void;
-  userShutdown(socketID:string): void;
-  userReboot(socketID:string): void;
-  userFileDownload(socketID:string): void;
+  NodeListData: Array<NodeListData> | undefined;
+  userCommandRun(socketID: string): void;
+  userShutdown(socketID: string): void;
+  userReboot(socketID: string): void;
+  userFileDownload(socketID: string): void;
 }
 
 class NodeList extends React.Component<NodeListProps> {
   render() {
-    let clientList:any;
-    if(!!this.props.NodeListData){
-      clientList = this.props.NodeListData.map((ListData)=>{
+    let clientList: any;
+    if (!!this.props.NodeListData) {
+      clientList = this.props.NodeListData.map((ListData, index) => {
         return (
-          <Node userName={ListData.clientIP} cpu={ListData.cpu} ram={ListData.ram} vga={ListData.vga} socketID={ListData.socketID} status="ACTIVATE" userCommandRun={this.props.userCommandRun} userShutdown={this.props.userShutdown} userReboot={this.props.userReboot} userFileDownload={this.props.userFileDownload}/>
+          <Node
+            index={index}
+            userName={ListData.clientIP}
+            socketID={ListData.socketID}
+            status="ACTIVATE"
+            userCommandRun={this.props.userCommandRun}
+            userShutdown={this.props.userShutdown}
+            userReboot={this.props.userReboot}
+            userFileDownload={this.props.userFileDownload}
+          />
         );
-      })
-    }else{
-      clientList = <div className="flex text-gray-300 m-5">There are no connected users.</div>;
+      });
+    } else {
+      clientList = (
+        <div className="flex text-gray-300 m-5">
+          There are no connected users.
+        </div>
+      );
     }
     return (
-        <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5 stop-dragging">
+      <div className=" bg-white my-6 rounded-lg overflow-hidden shadow-xl m-5 stop-dragging">
         <table className="min-w-max w-full table-auto">
           <thead>
             <tr className="bg-gradient-to-r from-green-400 to-blue-500 text-white uppercase text-sm leading-normal">
+              <th className="py-3 pl-4 text-left">Index</th>
               <th className="py-3 px-6 text-left">UserName</th>
-              <th className="py-3 px-6 text-left">Performance</th>
+              <th className="py-3 px-6 text-left">SocketID</th>
               <th className="py-3 px-6 text-center">Status</th>
               <th className="py-3 px-6 text-center">Actions</th>
             </tr>

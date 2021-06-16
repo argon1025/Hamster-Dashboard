@@ -3,20 +3,24 @@ import components from "./components";
 // 일렉트론 이벤트 수신용
 const electron = window.require("electron");
 
+/**
+ * Data Type Declaration
+ */
+
+// Online Node DataType
 type NodeListData = {
-  clientIP: string,
-  socketID: string,
-  cpu: number,
-  ram: number,
-  vga: number,
+  clientIP: string;
+  socketID: string;
 };
 
+// Log Data DataType
 type logData = {
-  date:string,
-  logType:string,
-  content:string
+  date: string;
+  logType: string;
+  content: string;
 };
 
+// React state Interface
 interface AppState {
   NodeDataList: Array<NodeListData> | undefined;
   totalNodeCount: number;
@@ -24,26 +28,26 @@ interface AppState {
   modal: boolean;
   modalType: string;
   modalMessage: string;
-  modalTargetSocketID:string;
+  modalTargetSocketID: string;
 }
 
 class App extends React.Component {
-
   state: AppState = {
     NodeDataList: undefined,
     totalNodeCount: 0,
-    logData: [{  date:"[√]",
-      logType:"System",
-      content:"System loading complete"}],
-    modal:false,
-    modalType:"",
-    modalMessage:"",
-    modalTargetSocketID:""
+    logData: [
+      { date: "[√]", logType: "System", content: "System loading complete" },
+    ],
+    modal: false,
+    modalType: "",
+    modalMessage: "",
+    modalTargetSocketID: "",
   };
 
   constructor(props: {} | Readonly<{}>) {
     super(props);
 
+    // scope
     this.setTotalNodeCount = this.setTotalNodeCount.bind(this);
     this.addNodeCount = this.addNodeCount.bind(this);
     this.subNodeCount = this.subNodeCount.bind(this);
@@ -57,99 +61,103 @@ class App extends React.Component {
     this.isOffline = this.isOffline.bind(this);
     this.isOnline = this.isOnline.bind(this);
     this.logEvent = this.logEvent.bind(this);
-    this.socketServerOffline = this.socketServerOffline.bind(this)
+    this.allUserCommandRun = this.allUserCommandRun.bind(this);
+    this.socketServerOffline = this.socketServerOffline.bind(this);
+    this.allUserFileDownload = this.allUserFileDownload.bind(this);
   }
-  componentDidMount(){
+  componentDidMount() {
     this.isOnline();
     this.isOffline();
     this.logEvent();
     this.socketServerOffline();
   }
-  componentWillUnmount(){
-    electron.ipcRenderer.removeListener("isOnline")
-    electron.ipcRenderer.removeListener("isOffline")
-    electron.ipcRenderer.removeListener("logEvent")
-    electron.ipcRenderer.removeListener("socketServerOffline")
+  componentWillUnmount() {
+    electron.ipcRenderer.removeListener("isOnline");
+    electron.ipcRenderer.removeListener("isOffline");
+    electron.ipcRenderer.removeListener("logEvent");
+    electron.ipcRenderer.removeListener("socketServerOffline");
   }
   protected logEvent(): void {
     electron.ipcRenderer.on("logEvent", (event: any, data: any) => {
       console.log(data);
       //data.log = data.log.replace(new RegExp('\r?\n','g'), '<br />');
-      this.addLogContent("System",`${data.clientIP}/${data.socketID}
-      ${data.log}`);
-    })
+      this.addLogContent(
+        "System",
+        `${data.clientIP}/${data.socketID}
+      ${data.log}`
+      );
+    });
   }
-   /**
-   * 
+  /**
+   *
    * 일렉트론 이벤트 처리
    * Electron -> React
-   * 
+   *
    */
   protected isOnline(): void {
     electron.ipcRenderer.on("isOnline", (event: any, data: any) => {
       console.log(event);
-      
+
       // NodeDataList를 로드합니다
       let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
       console.log(data);
-      
+
       let newUserData: NodeListData = {
-        "clientIP": `${data.clientIP}`,
-        "socketID": `${data.socketID}`,
-        "cpu": 0,
-        "ram": 0,
-        "vga": 0,
-      }
+        clientIP: `${data.clientIP}`,
+        socketID: `${data.socketID}`,
+      };
       console.log(newUserData);
-      
-      if(!!NodeListData){
+
+      if (!!NodeListData) {
         console.log("유저 데이터를 추가합니다");
         NodeListData.push(newUserData);
-        this.setState({...this.state,NodeDataList:NodeListData})
-      }else{
+        this.setState({ ...this.state, NodeDataList: NodeListData });
+      } else {
         console.log("유저 리스트를 새로 생성합니다");
-        this.setState({...this.state,NodeDataList:[newUserData]});
+        this.setState({ ...this.state, NodeDataList: [newUserData] });
       }
       console.log(this.state);
       //console.log(data);
 
       this.addNodeCount();
-      this.addLogContent("System",`${data.socketID} - ${data.clientIP} is Online`);
-
+      this.addLogContent(
+        "System",
+        `${data.socketID} - ${data.clientIP} is Online`
+      );
     });
   }
   protected isOffline(): void {
     electron.ipcRenderer.on("isOffline", (event: any, data: any) => {
       console.log(data);
-      
-        // NodeDataList를 로드합니다
-        let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
-        // 데이터가 있다?
-        if(!!NodeListData){
-          NodeListData = NodeListData.filter((object)=>{
-            if(object.socketID === data) {
-              this.subNodeCount();
-              this.addLogContent("System",`${data} is Offline`);
-            }
-            return object.socketID !== data;
-          })
-          this.setState({...this.state,NodeDataList:NodeListData})
-        }
-        console.log(this.state);
+
+      // NodeDataList를 로드합니다
+      let NodeListData: NodeListData[] | undefined = this.state.NodeDataList;
+      // 데이터가 있다?
+      if (!!NodeListData) {
+        NodeListData = NodeListData.filter((object) => {
+          if (object.socketID === data) {
+            this.subNodeCount();
+            this.addLogContent("System", `${data} is Offline`);
+          }
+          return object.socketID !== data;
+        });
+        this.setState({ ...this.state, NodeDataList: NodeListData });
+      }
+      console.log(this.state);
       //console.log(data);
-    })
+    });
   }
   protected socketServerOffline(): void {
     electron.ipcRenderer.on("socketServerOffline", (event: any, data: any) => {
-    this.setState({...this.state,NodeDataList: null})
-    this.cleanNodeCount();
-    this.addLogContent("System",`disconnect SocketServer`);
+      this.setState({ ...this.state, NodeDataList: null });
+      this.cleanNodeCount();
+      this.addLogContent("System", `disconnect SocketServer`);
     });
   }
   /**
-   * 
+   *
    * 유저 카운트 변경
-   * 
+   *
    */
   protected setTotalNodeCount(count: number): void {
     this.setState({ ...this.state, totalNodeCount: count });
@@ -165,149 +173,210 @@ class App extends React.Component {
   protected cleanNodeCount(): void {
     this.setState({ ...this.state, totalNodeCount: 0 });
   }
-   /**
-   * 
+  /**
+   *
    * 유저 전체 제어 이벤트
-   * 
+   *
    */
   protected allUserShutdown(): void {
-    electron.ipcRenderer.send("all-users", "shutdown")
+    electron.ipcRenderer.send("all-users", "shutdown");
     console.log("shutdown");
-    
-    this.addLogContent("System","all User Shutdown");
+
+    this.addLogContent("System", "all User Shutdown");
   }
   protected allUserReboot(): void {
-    electron.ipcRenderer.send("all-users", "reboot")
-    this.addLogContent("System","all User Reboot");
+    electron.ipcRenderer.send("all-users", "reboot");
+    this.addLogContent("System", "all User Reboot");
   }
-  protected allUserStartTrex(): void {
-    const UserList: any = this.state.NodeDataList;
-    let sortUserList = {};
-    sortUserList = UserList.filter( (object: any) =>{
-      console.log(object);
-      
-    })
-    
+  protected allUserCommandRun(command?: string) {
+    if (!!command) {
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent("System", `Command Execution All users $ ${command}`);
+    } else {
+      this.modalOpen(
+        "Command Execution All users",
+        `Command Execution All users`,
+        "allUser"
+      );
+    }
+  }
+  protected allUserFileDownload(url?: string) {
+    if (!!url) {
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent("System", `All users Download files to ${url}`);
+    } else {
+      this.modalOpen(
+        "All users Download files",
+        `All users Download files`,
+        "allUser"
+      );
+    }
   }
   /**
-   * 
+   *
    * 특정 유저 제어 이벤트
-   * 
+   *
    */
   // 특정 유저 커맨드 실행 요청
-  protected userCommandRun(socketID:string,command?:string) {
-    if(!!command){
-    // 매개변수 커맨드가 존재할경우
-    this.addLogContent("System",`${socketID}/Command Execution $ ${command}`);
-    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'commnand', command: command});
-    }else{
-    // 매개변수 커맨드가 존재하지 않을경우
-    // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
-    this.modalOpen("Command Execution",`${socketID} run command`,socketID);
+  protected userCommandRun(socketID: string, command?: string) {
+    if (!!command) {
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent(
+        "System",
+        `${socketID}/Command Execution $ ${command}`
+      );
+      electron.ipcRenderer.send("single-user", {
+        socketID: socketID,
+        type: "commnand",
+        command: command,
+      });
+    } else {
+      // 매개변수 커맨드가 존재하지 않을경우
+      // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
+      this.modalOpen("Command Execution", `${socketID} run command`, socketID);
     }
   }
   // 특정 유저 시스템 종료 요청
-  protected userShutdown(socketID:string): void {
-    this.addLogContent("System",`${socketID}/User Shutdown $`);
-    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'shutdown'});
+  protected userShutdown(socketID: string): void {
+    this.addLogContent("System", `${socketID}/User Shutdown $`);
+    electron.ipcRenderer.send("single-user", {
+      socketID: socketID,
+      type: "shutdown",
+    });
   }
   // 특정 유저 재부팅 요청
-  protected userReboot(socketID:string): void {
-    this.addLogContent("System",`${socketID}/User Reboot $`);
-    electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'reboot'});
+  protected userReboot(socketID: string): void {
+    this.addLogContent("System", `${socketID}/User Reboot $`);
+    electron.ipcRenderer.send("single-user", {
+      socketID: socketID,
+      type: "reboot",
+    });
   }
   // 특정 유저 파일 다운로드 요청
-  protected userFileDownload(socketID:string,url?:string){
-    if(!!url){
+  protected userFileDownload(socketID: string, url?: string) {
+    if (!!url) {
       // 매개변수 커맨드가 존재할경우
-      console.log(url)
-      this.addLogContent("System",`${socketID}/FileDownload@${url}`);
-      electron.ipcRenderer.send("single-user", {socketID: socketID, type: 'filedown', url: url});
-      }else{
+      console.log(url);
+      this.addLogContent("System", `${socketID}/FileDownload@${url}`);
+      electron.ipcRenderer.send("single-user", {
+        socketID: socketID,
+        type: "filedown",
+        url: url,
+      });
+    } else {
       // 매개변수 커맨드가 존재하지 않을경우
       // 커맨드 입력을 위해 모달 컴포넌트를 호출한다
-      this.modalOpen("File Download",`${socketID} file download`,socketID);
-      console.log(`${socketID} run command ${socketID}`)
+      this.modalOpen("File Download", `${socketID} file download`, socketID);
+      console.log(`${socketID} run command ${socketID}`);
       //this.test();
-      }
+    }
   }
   /**
-   * 
+   *
    * 모달 제어 이벤트
    * 유저 버튼 이벤트 -> 아래 모달 메서드 호출 modalOpen -> 모달 입력 -> 데이터 수신 modalInput
    *  -> 수신된 데이터 타입을 보고 다시 유저 버튼 이벤트 호출
-   * 
+   *
    */
   // 모달 실행
-  protected modalOpen = (modalType:string,modalMessage:string,socketID:string):void =>{
-    this.setState({...this.state, modalType:modalType, modalMessage:modalMessage, modal:true, modalTargetSocketID:socketID});
-  }
+  protected modalOpen = (
+    modalType: string,
+    modalMessage: string,
+    socketID: string
+  ): void => {
+    this.setState({
+      ...this.state,
+      modalType: modalType,
+      modalMessage: modalMessage,
+      modal: true,
+      modalTargetSocketID: socketID,
+    });
+  };
   // 모달 종료
-  protected modalClose = ():void => {
-    this.setState({...this.state, modalType:"", modalMessage:"", modal:false});
-  }
+  protected modalClose = (): void => {
+    this.setState({
+      ...this.state,
+      modalType: "",
+      modalMessage: "",
+      modal: false,
+    });
+  };
   // 모달 send 버튼 클릭시 호출되는 이벤트
-  protected modalInput = (inputData:string,socketID:string):void => {
+  protected modalInput = (inputData: string, socketID: string): void => {
     // 이벤트 재호출
     const INPUT_TYPE = this.state.modalType;
     switch (INPUT_TYPE) {
       case "Command Execution":
-        this.userCommandRun(socketID,inputData);
+        this.userCommandRun(socketID, inputData);
         break;
       case "File Download":
-        this.userFileDownload(socketID,inputData);
+        this.userFileDownload(socketID, inputData);
+        break;
+      case "Command Execution All users":
+        this.allUserCommandRun(inputData);
+        break;
+      case "All users Download files":
+        this.allUserFileDownload(inputData);
         break;
       default:
         console.log("modalInput call event error");
         break;
     }
     // 모달 종료
-    this.setState({...this.state, modalType:"", modalMessage:"", modal:false});
-
-  }
-   /**
-   * 
+    this.setState({
+      ...this.state,
+      modalType: "",
+      modalMessage: "",
+      modal: false,
+    });
+  };
+  /**
+   *
    * 로깅
-   * 
+   *
    */
-  protected addLogContent(logtype: string,content: string): void{
-    
+  protected addLogContent(logtype: string, content: string): void {
     let logData = this.state.logData;
     const date: Date = new Date();
-    const contentData:logData = {
+    const contentData: logData = {
       date: `${date.getHours()}:${date.getMinutes()}`,
-      logType:logtype,
-      content:content
-    }
+      logType: logtype,
+      content: content,
+    };
 
-    logData.push(contentData)
-    this.setState({...this.state,logData:logData})
+    logData.push(contentData);
+    this.setState({ ...this.state, logData: logData });
 
     let scrollBar = window.document.getElementById("console");
-    if(scrollBar){
+    if (scrollBar) {
       scrollBar.scrollTop = scrollBar.scrollHeight;
     }
-
   }
 
   render() {
-    console.log("redner");
-
-    let MODAL_STAGE = this.state.modal;
-    let logList:any;
-    logList = this.state.logData.map((logListData)=>{
+    let logList: any;
+    logList = this.state.logData.map((logListData) => {
       return (
-        <div className="pb-1 whitespace-pre-line">{logListData.date} [{logListData.logType}] {logListData.content}</div>
+        <div className="pb-1 whitespace-pre-line">
+          {logListData.date} [{logListData.logType}] {logListData.content}
+        </div>
       );
     });
     return (
       <div className="w-full h-full bg-gray-50 font-main-font">
-        <components.Modal modalTargetSocketID={this.state.modalTargetSocketID} modal={this.state.modal} modalType={this.state.modalType} modalMessage={this.state.modalMessage} modalInput={this.modalInput} modalClose={this.modalClose}/>
+        <components.Modal
+          modalTargetSocketID={this.state.modalTargetSocketID}
+          modal={this.state.modal}
+          modalType={this.state.modalType}
+          modalMessage={this.state.modalMessage}
+          modalInput={this.modalInput}
+          modalClose={this.modalClose}
+        />
 
         <components.Navbar />
 
-                {/* utility buttons */}
-                <div className="flex flex-row-reverse m-3 stop-dragging">
+        {/* utility buttons */}
+        <div className="flex flex-row-reverse m-3 stop-dragging">
           {/* shutdown buttons */}
           <div
             className="inline-block mr-2 mt-2"
@@ -355,6 +424,62 @@ class App extends React.Component {
               All User reboot
             </button>
           </div>
+          {/* Execution command All */}
+          <div
+            className="inline-block mr-2 mt-2"
+            onClick={() => {
+              this.allUserCommandRun();
+            }}
+          >
+            <button
+              type="button"
+              className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-pink-400 hover:bg-pink-500 hover:shadow-lg flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                />
+              </svg>
+              Execution command All
+            </button>
+          </div>
+          {/* File Download All */}
+          <div
+            className="inline-block mr-2 mt-2"
+            onClick={() => {
+              this.allUserFileDownload();
+            }}
+          >
+            <button
+              type="button"
+              className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-400 hover:bg-blue-500 hover:shadow-lg flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                />
+              </svg>
+              File Download All
+            </button>
+          </div>
           {/* logging component */}
           <components.CounterWiget
             counterType="Online"
@@ -390,14 +515,22 @@ class App extends React.Component {
                 className="pl-3 pt-3 pb-12 h-full overflow-y-auto overscroll-contain text-green-200 font-mono text-xs bg-black"
                 id="console"
               >
-                <div className="pb-1 pt-2">Hamster Dashboard Manager @ 2021</div>
+                <div className="pb-1 pt-2">
+                  Hamster Dashboard Manager @ 2021
+                </div>
                 {logList}
               </div>
             </div>
           </div>
         </div>
 
-        <components.NodeList NodeListData={this.state.NodeDataList} userCommandRun={this.userCommandRun} userShutdown={this.userShutdown} userReboot={this.userReboot} userFileDownload={this.userFileDownload}/>
+        <components.NodeList
+          NodeListData={this.state.NodeDataList}
+          userCommandRun={this.userCommandRun}
+          userShutdown={this.userShutdown}
+          userReboot={this.userReboot}
+          userFileDownload={this.userFileDownload}
+        />
       </div>
     );
   }
