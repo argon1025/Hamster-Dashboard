@@ -3,7 +3,7 @@ import { ipcMain } from "electron";
 const io = require("socket.io-client");
 export default function socketClient(mainWindow: any) {
   let socket = io.connect(
-    "http://ec2-3-34-49-175.ap-northeast-2.compute.amazonaws.com:8828",
+    "http://localhost:8828", //ec2-3-34-49-175.ap-northeast-2.compute.amazonaws.com
     {
       reconnectionAttempt: 3,
       // reconnection: false,
@@ -36,16 +36,16 @@ export default function socketClient(mainWindow: any) {
     console.log("all-users");
     switch (data) {
       case "shutdown":
-        socket.emit("shutdown", socket.id);
+        socket.emit("all-users-shutdown", socket.id);
         break;
       case "reboot":
-        socket.emit("reboot", socket.id);
+        socket.emit("all-users-reboot", socket.id);
         break;
       case "filedown":
-        socket.emit("filedown", socket.id, data.url);
+        socket.emit("all-users-filedown", socket.id, data.url);
         break;
       case "commnand":
-        socket.emit("commnand", socket.id, data.command);
+        socket.emit("all-users-commnand", socket.id, data.command);
         break;
       default:
         break;
@@ -55,22 +55,33 @@ export default function socketClient(mainWindow: any) {
   ipcMain.on("single-user", (event: any, data: any) => {
     console.log("single-users");
     console.log(data);
-    switch (data.type) {
-      case "shutdown":
-        socket.emit("shutdown", socket.id, data.socketID);
-        break;
-      case "reboot":
-        socket.emit("reboot", socket.id, data.socketID);
-        break;
-      case "filedown":
-        socket.emit("filedown", socket.id, data.url, data.socketID);
-        break;
-      case "commnand":
-        socket.emit("commnand", socket.id, data.command, data.socketID);
-        break;
-      default:
-        break;
-    }
+    const DashBoardID = socket.id;
+    // 클라이언트 -> 소켓
+    // param:
+    // DashBoardID
+    // data = { commnadtype, clientsocketID, url?, command? }
+    socket.emit("single-users", DashBoardID, data);
+    // switch (data.type) {
+    //   case "shutdown":
+    //     socket.emit("single-user", "shutdown", socket.id, data.socketID);
+    //     break;
+    //   case "reboot":
+    //     socket.emit("single-user", "reboot", socket.id, data.socketID);
+    //     break;
+    //   case "filedown":
+    //     socket.emit("single-user", socket.id, data.url, data.socketID);
+    //     break;
+    //   case "commnand":
+    //     socket.emit(
+    //       "single-user-commnand",
+    //       socket.id,
+    //       data.command,
+    //       data.socketID
+    //     );
+    //     break;
+    //   default:
+    //     break;
+    // }
   });
   // logEvent
   socket.on("dashboard_logEvent", function (clientIP, socketID, result) {
