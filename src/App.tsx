@@ -61,7 +61,9 @@ class App extends React.Component {
     this.isOffline = this.isOffline.bind(this);
     this.isOnline = this.isOnline.bind(this);
     this.logEvent = this.logEvent.bind(this);
+    this.allUserCommandRun = this.allUserCommandRun.bind(this);
     this.socketServerOffline = this.socketServerOffline.bind(this);
+    this.allUserFileDownload = this.allUserFileDownload.bind(this);
   }
   componentDidMount() {
     this.isOnline();
@@ -186,12 +188,29 @@ class App extends React.Component {
     electron.ipcRenderer.send("all-users", "reboot");
     this.addLogContent("System", "all User Reboot");
   }
-  protected allUserStartTrex(): void {
-    const UserList: any = this.state.NodeDataList;
-    let sortUserList = {};
-    sortUserList = UserList.filter((object: any) => {
-      console.log(object);
-    });
+  protected allUserCommandRun(command?: string) {
+    if (!!command) {
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent("System", `Command Execution All users $ ${command}`);
+    } else {
+      this.modalOpen(
+        "Command Execution All users",
+        `Command Execution All users`,
+        "allUser"
+      );
+    }
+  }
+  protected allUserFileDownload(url?: string) {
+    if (!!url) {
+      // 매개변수 커맨드가 존재할경우
+      this.addLogContent("System", `All users Download files to ${url}`);
+    } else {
+      this.modalOpen(
+        "All users Download files",
+        `All users Download files`,
+        "allUser"
+      );
+    }
   }
   /**
    *
@@ -293,6 +312,12 @@ class App extends React.Component {
       case "File Download":
         this.userFileDownload(socketID, inputData);
         break;
+      case "Command Execution All users":
+        this.allUserCommandRun(inputData);
+        break;
+      case "All users Download files":
+        this.allUserFileDownload(inputData);
+        break;
       default:
         console.log("modalInput call event error");
         break;
@@ -329,9 +354,6 @@ class App extends React.Component {
   }
 
   render() {
-    console.log("redner");
-
-    let MODAL_STAGE = this.state.modal;
     let logList: any;
     logList = this.state.logData.map((logListData) => {
       return (
@@ -400,6 +422,62 @@ class App extends React.Component {
                 />
               </svg>
               All User reboot
+            </button>
+          </div>
+          {/* Execution command All */}
+          <div
+            className="inline-block mr-2 mt-2"
+            onClick={() => {
+              this.allUserCommandRun();
+            }}
+          >
+            <button
+              type="button"
+              className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-pink-400 hover:bg-pink-500 hover:shadow-lg flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                />
+              </svg>
+              Execution command All
+            </button>
+          </div>
+          {/* File Download All */}
+          <div
+            className="inline-block mr-2 mt-2"
+            onClick={() => {
+              this.allUserFileDownload();
+            }}
+          >
+            <button
+              type="button"
+              className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-400 hover:bg-blue-500 hover:shadow-lg flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                />
+              </svg>
+              File Download All
             </button>
           </div>
           {/* logging component */}
