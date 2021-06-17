@@ -32,9 +32,7 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
-  mainWindow.on("ready-to-show", ()=>{
-    socketClient(mainWindow);
-  })
+  mainWindow.webContents.on('did-finish-load', ()=> socketClient(mainWindow))
   // Emitted when the window is closed.
   mainWindow.on("closed", () => (mainWindow = undefined!));
   // mainWindow.webContents.on("did-finish-load", () => socketServer(mainWindow));

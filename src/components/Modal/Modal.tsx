@@ -17,6 +17,7 @@ class Modal extends React.Component<ModalProps> {
        this.setState({...this.state,inputData:event.target.value})
     }
     protected sendButton = ():void =>{
+      console.log("click!");
         this.props.modalInput(this.state.inputData,this.props.modalTargetSocketID);
      }
   render() {
