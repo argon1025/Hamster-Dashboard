@@ -1,18 +1,23 @@
-# Getting Started with Typescript + Electron + React + tailwind
-![image](https://user-images.githubusercontent.com/55491354/118607094-29229400-b7f3-11eb-9911-e31f5559d81d.png)
-Simple Boilerplate for a project using Typescript, Electron, React and tailwind
+# Hamster Dashboard
+![image](https://user-images.githubusercontent.com/55491354/122348840-89d5f580-cf86-11eb-80ca-45cbd05c3ae6.png)
+Local computer management solution using socketIO\
+SocketIO를 사용한 컴퓨터 매니지먼트 솔루션
 
-```
-my-app
-├── electron <-- Electron folder
-├── public <-- React public folder
-├── src <-- React index folder
-```
+# Project Stack
+- Electron
+- React
+- tailwind
+- Typescript
+
+# Feature
+- MAC, Window support
+- CMD command execution
+- Download File
 
 # Installation
 ### 1.Clone this Project
 ```
-git clone https://github.com/argon1025/Typescript-React-Electron.git
+git clone https://github.com/argon1025/Hamster-server.git
 ```
 
 ### 2.install all dependencies
@@ -21,28 +26,23 @@ npm install
 yarn install
 ```
 
-# Simple Usage
-### `yarn start-dev`
-Runs the app in the development mode.
-Open [http://localhost:3000](http://localhost:3000) and start Electron App
+### 3.Started dev server
+```
+npm run start-dev
+yarn start-dev
+```
 
-### `yarn build`
-Builds the app for production to the `dist` folder.
+# Build this solution
+### `mac`
+```
+npm run build-mac
+yarn build-mac
+```
+### `Window`
+```
+npm run build-win
+yarn build-win
+```
 
-# Available all Scripts
-### `yarn start-react`
-### `yarn build-react`
-### `yarn test-react`
-### `yarn eject`
-### `yarn build-electron`
-
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-To learn tailwind, check out the [Tailwind documentation](https://tailwindcss.com/).
-
-To learn Electron, check out the [Electron documentation](https://www.electronjs.org/docs/tutorial/quick-start).
+# Issues
+[Here](https://github.com/argon1025/Hamster-server/issues)
