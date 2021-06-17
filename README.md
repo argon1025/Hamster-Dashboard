@@ -3,7 +3,15 @@
 Local computer management solution using socketIO\
 SocketIO를 사용한 컴퓨터 매니지먼트 솔루션
 
-# Project Stack
+# Project Architecture
+![image](https://user-images.githubusercontent.com/55491354/122352460-1df58c00-cf8a-11eb-9fa3-f187dd9ee9c1.png)
+
+## Project requirement
+Hamster [Dashboard](https://github.com/argon1025/Hamster-Dashboard)\
+Hamster [SocketIO-Server](https://github.com/argon1025/Hamster-Dashboard)\
+Hamster [Client](https://github.com/argon1025/Hamster-client)
+
+## Project Stack
 - Electron
 - React
 - tailwind
