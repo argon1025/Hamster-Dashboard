@@ -3,7 +3,7 @@ import { ipcMain } from "electron";
 const io = require("socket.io-client");
 export default function socketClient(mainWindow: any) {
   let socket = io.connect(
-    "http://localhost:8828", //ec2-3-34-49-175.ap-northeast-2.compute.amazonaws.com
+    "http://ec2-3-34-49-175.ap-northeast-2.compute.amazonaws.com:8828", //ec2-3-34-49-175.ap-northeast-2.compute.amazonaws.com
     {
       reconnectionAttempt: 3,
       // reconnection: false,

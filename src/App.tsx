@@ -137,7 +137,10 @@ class App extends React.Component {
         NodeListData = NodeListData.filter((object) => {
           if (object.socketID === data) {
             this.subNodeCount();
-            this.addLogContent("System", `${data} is Offline`);
+            this.addLogContent(
+              "System",
+              `${data} - ${object.clientIP} is Offline`
+            );
           }
           return object.socketID !== data;
         });
@@ -187,17 +190,17 @@ class App extends React.Component {
     this.addLogContent("System", "all User Shutdown");
   }
   protected allUserReboot(): void {
-    electron.ipcRenderer.send("all-users", {type: "reboot"});
+    electron.ipcRenderer.send("all-users", { type: "reboot" });
     this.addLogContent("System", "all User Reboot");
   }
   protected allUserCommandRun(command?: string) {
     if (!!command) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `Command Execution All users $ ${command}`);
-      electron.ipcRenderer.send("all-users",{ 
+      electron.ipcRenderer.send("all-users", {
         type: "commnand",
         command: command,
-       });
+      });
     } else {
       this.modalOpen(
         "Command Execution All users",
@@ -210,9 +213,10 @@ class App extends React.Component {
     if (!!url) {
       // 매개변수 커맨드가 존재할경우
       this.addLogContent("System", `All users Download files to ${url}`);
-      electron.ipcRenderer.send("all-users", {        
-      type: "filedown",
-      url: url,  });
+      electron.ipcRenderer.send("all-users", {
+        type: "filedown",
+        url: url,
+      });
     } else {
       this.modalOpen(
         "All users Download files",
