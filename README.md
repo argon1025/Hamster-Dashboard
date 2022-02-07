@@ -1,3 +1,4 @@
+> This project won't be maintained ⚒️
 # Hamster Dashboard
 ![image](https://user-images.githubusercontent.com/55491354/122348840-89d5f580-cf86-11eb-80ca-45cbd05c3ae6.png)
 Local computer management solution using socketIO\
